@@ -3,19 +3,10 @@ import 'package:hotel_front/navigationBar.dart';
 
 const List<String> rati = <String>["Сначала положительные", "Сначала отрицательные"];
 String val = rati[0];
-
-
 class ratingHotel extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        pageTransitionsTheme: PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: CupertinoPageTransitionsBuilder()
-          }
-        )
-      ),
       home: ratingHotelCard(),
       debugShowCheckedModeBanner: false,
     );

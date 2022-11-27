@@ -1,8 +1,8 @@
-import 'package:hotel_front/home.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hotel_front/home.dart';
+import 'package:hotel_front/room.dart';
 
 
 void main() {
-  runApp(HomePage());
+  runApp(roomPage());
 }

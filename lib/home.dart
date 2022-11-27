@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hotel_front/room.dart';
 import 'package:hotel_front/navigationBar.dart';
 import 'package:hotel_front/rating.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:hotel_front/login.dart';
 
-
-
+const int log =1;
 
 const List<String> city = <String>["Москва", "СПБ", "Калуга"];
 String val = city[0];
@@ -93,6 +94,16 @@ class hotelCard extends StatelessWidget {
                         },
                         child: Text("Подробнее"),
                       ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.blue,
+                          textStyle: const TextStyle(fontSize: 20),
+                        ),
+                        onPressed: () {
+                          showDialog(context: context, builder:(context)=>login());
+                        },
+                        child: Text("Акк"),
+                      ),
 
                     ],
                   ),
@@ -101,6 +112,5 @@ class hotelCard extends StatelessWidget {
             );
           }),
     );
-    throw UnimplementedError();
   }
 }
