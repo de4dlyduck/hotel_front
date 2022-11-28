@@ -1,106 +1,126 @@
 import 'package:hotel_front/navigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:hotel_front/rating.dart';
+import 'package:hotel_front/models.dart';
+import 'dart:convert';
 
-const List<String> city = <String>["Дешевле", "Дороже"];
-String val = city[0];
-var heading = '2300 руб за сутки';
-var subheading = '2 кровати, 1 ванная';
-var cardImage = NetworkImage(
-    'https://sovcominvest.ru/uploads/photo/6921/image/4e6b21d8254ef3e176bd0837a24efad8.jpg');
-var supportingText = 'Описание:';
-DateTime curent = DateTime(2022);
+const List<String> choose = <String>["Дешевле", "Дороже"];
+String val = choose[0];
+late String heading;
+late String subheading;
+var result = [];
+var cardImage = NetworkImage('https://sovcominvest.ru/uploads/photo/6921/image/4e6b21d8254ef3e176bd0837a24efad8.jpg');
+late String supportingText;
 
-class roomPage extends StatelessWidget {
-  const roomPage({super.key});
+
+
+class roomPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => roomCard();
+}
+
+class roomCard extends State<roomPage> {
+
+  void takeData(){
+    Roomdecode Rdecode = Roomdecode();
+    final json = jsonDecode(Rdecode.dec().toString()) as List<dynamic>;
+    final res = json.map((e) => Rooms.fromJson(e as Map<String, dynamic>)).toList();
+    setState(() {
+      result = res;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    takeData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          pageTransitionsTheme: const PageTransitionsTheme(builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder()
-      })),
-      home: roomCard(),
       debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class roomCard extends StatelessWidget {
-  roomCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: navigationBarside(),
-      appBar: AppBar(
-        title: Text("Сначала:"),
-        actions: [
-          DropdownButton(
-            value: val,
-            icon: Icon(Icons.keyboard_arrow_down),
-            items: city.map((String items) {
-              return DropdownMenuItem(
-                value: items,
-                child: Text(items),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              val = newValue!;
-            },
-          ),
-        ],
-      ),
-      backgroundColor: Colors.indigo,
-      body: ListView.builder(
-          itemCount: 3,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-                elevation: 4.0,
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(heading),
-                      subtitle: Text(subheading),
-                      trailing: TextButton.icon(
-                        label: Text("4.5"),
-                        icon: Icon(Icons.star),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ratingHotel()));
-                        },
-                      ),
-                    ),
-                    Container(
-                      height: 200.0,
-                      child: Ink.image(
-                        image: cardImage,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(16.0),
-                      alignment: Alignment.centerLeft,
-                      child: Text(supportingText),
-                    ),
-                    ButtonBar(
-                      children: [
-                        TextButton(
-                          child: const Text('СНЯТЬ'),
+      home: Scaffold(
+        drawer: navigationBarside(),
+        appBar: AppBar(
+          title: Text("Сначала:"),
+          actions: [
+            DropdownButton(
+              value: val,
+              icon: Icon(Icons.keyboard_arrow_down),
+              items: choose.map((String items) {
+                return DropdownMenuItem(
+                  value: items,
+                  child: Text(items),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                val = newValue!;
+              },
+            ),
+          ],
+        ),
+        backgroundColor: Colors.indigo,
+        body: ListView.builder(
+            itemCount: result.length,
+            itemBuilder: (BuildContext context, int index) {
+              heading = '';
+              subheading='';
+              supportingText='';
+              subheading += result[index].bedScore.toString();
+              subheading += 'кровати, ';
+              subheading += result[index].vans.toString();
+              subheading += 'ванная';
+              heading += result[index].cost.toString();
+              heading += ' руб за сутки';
+              supportingText += 'Описание:';
+              supportingText += result[index].description.toString();
+              return Card(
+                  elevation: 4.0,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(heading),
+                        subtitle: Text(subheading),
+                        trailing: TextButton.icon(
+                          label: Text("4.5"),
+                          icon: Icon(Icons.star),
                           onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => takeOffDate());
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ratingHotel()));
                           },
-                        )
-                      ],
-                    )
-                  ],
-                ));
-          }),
+                        ),
+                      ),
+                      Container(
+                        height: 200.0,
+                        child: Ink.image(
+                          image: cardImage,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(16.0),
+                        alignment: Alignment.centerLeft,
+                        child: Text(supportingText),
+                      ),
+                      ButtonBar(
+                        children: [
+                          TextButton(
+                            child: const Text('СНЯТЬ'),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => takeOffDate());
+                            },
+                          )
+                        ],
+                      )
+                    ],
+                  ));
+            }),
+      ),
     );
     throw UnimplementedError();
   }
@@ -142,9 +162,9 @@ class _takeOff extends State<takeOffDate> {
                   dateT = DateTime.parse(result.end.toString());
                   date += "${dateT.day}-${dateT.month}-${dateT.year}";
                   int cost;
-                  cost =0;
+                  cost = 0;
                   datecost = 'Цена:';
-                  cost = result.duration.inDays.toInt()*2300;
+                  cost = result.duration.inDays.toInt() * 2300;
                   datecost += cost.toString();
                   datecost += ' Руб';
                 });
