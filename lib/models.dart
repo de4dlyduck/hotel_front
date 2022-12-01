@@ -1,8 +1,8 @@
 import 'dart:ffi';
 import 'dart:convert';
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+
 
 
 class Rooms {
@@ -40,12 +40,41 @@ class Rooms {
 }
 
 
-class Roomdecode {
-  var url1 = "http://10.0.2.2:5000/hotel/1";
-  Future<void> dec() async{
-    final response = await http.get(Uri.parse(url1));
-    var res = utf8.decode(response.bodyBytes);
-    debugPrint("'");
+
+class Profiles {
+  late String name;
+  late String surname;
+  late String patronymic;
+  late String password;
+  late int serial;
+  late int nomber;
+  late String mail;
+  late int telNumber;
+
+  Profiles({
+    required this.name,
+    required this.surname,
+    required this.patronymic,
+    required this.password,
+    required this.serial,
+    required this.nomber,
+    required this.mail,
+    required this.telNumber,
+  });
+
+  factory Profiles.fromJson(Map<String, dynamic> json){
+    return Profiles(
+        name: json['name'] as String,
+        surname: json['surname'] as String,
+        patronymic: json['patronymic'] as String,
+        password: json['vans'] as String,
+        serial: json['bedScore'] as int,
+        nomber: json['occupied'] as int,
+        mail: json['idUser'] as String,
+        telNumber: json['roomCode'] as int);
   }
 }
+
+
+
 

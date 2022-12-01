@@ -1,149 +1,148 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_front/profile.dart';
 import 'package:hotel_front/reg.dart';
 
-class login extends StatelessWidget {
+class logPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        height: 370,
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: ListView(
-            children: <Widget>[
-              Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(10),
-                  child: const Text(
-                    'Вход',
-                    style: TextStyle(fontSize: 20),
-                  )),
-              Container(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Имя пользователя',
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                child: TextField(
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Пароль',
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  showDialog(context: context, builder: (context)=> remember1());
-                  //forgot password screen
-                },
-                child: const Text(
-                  'Вспомнить пароль',
-                ),
-              ),
-              Container(
-                  height: 50,
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: ElevatedButton(
-                    child: const Text('Войти'),
-                    onPressed: () {},
-                  )),
-              SizedBox(height: 10),
-              Container(
-                  height: 50,
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: ElevatedButton(
-                    child: const Text('Регистрация'),
-                    onPressed: () {showDialog(context: context, builder: (context)=> regPage());},
-                  )),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  State<StatefulWidget> createState() => _logPage();
 }
 
-class remember1 extends StatelessWidget {
+class _logPage extends State<logPage> {
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        height: 170,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child: ListView(
-            children: <Widget>[
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Введите свою почту',
-                ),
-              ),
-              SizedBox(height: 12),
-              ListTile(
-                tileColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                title: Text(
-                  "Далее",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black),
-                ),
-                onTap: () {
-                  showDialog(context: context, builder: (context)=> remember2());
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+    return Scaffold(
+      backgroundColor: Colors.indigo,
+      body: Padding(
+        padding: EdgeInsets.fromLTRB(20, 250, 20, 0),
+        child: ListView(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      'Введите emall',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 1,
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                          color: Colors.white,
+                          width: 1,
+                        ))),
+                        child: Row(children: [
+                          Expanded(
+                              child: TextField(
+                            style: TextStyle(
+                                fontSize: 20, height: 1.4, color: Colors.white),
+                                onSubmitted: (text){
 
-class remember2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        height: 170,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child: ListView(
-            children: <Widget>[
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Введите проверочный код отправленный на почту',
-                ),
+                                },
+                          )),
+                          Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Colors.white,
+                            size: 30.0,
+                          )
+                        ]))
+                  ],
+                )),
+
+            Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      'Введите пароль',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 1,
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                          color: Colors.white,
+                          width: 1,
+                        ))),
+                        child: Row(children: [
+                          Expanded(
+                              child: TextField(
+                            style: TextStyle(
+                                fontSize: 20, height: 1.4, color: Colors.white),
+                                onSubmitted: (text){
+
+                                },
+                          )),
+                          Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Colors.white,
+                            size: 30.0,
+                          )
+                        ]))
+                  ],
+                )),
+
+            ListTile(
+              tileColor: Colors.indigo,
+              title: Text(
+                "Не помню пароль",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
               ),
-              SizedBox(height: 12),
-              ListTile(
-                tileColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                title: Text(
-                  "Далее",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black),
-                ),
-                onTap: () {
-                  showDialog(context: context, builder: (context)=> newPassword());
-                },
+              onTap: () {},
+            ),
+
+            ListTile(
+              tileColor: Colors.indigo,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(5),
               ),
-            ],
-          ),
+              title: Text(
+                "Войти",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+
+            SizedBox(height: 20),
+
+            ListTile(
+              tileColor: Colors.indigo,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              title: Text(
+                "Зарегистироваться",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => regPage()));
+              },
+            ),
+
+          ],
         ),
       ),
     );

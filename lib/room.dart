@@ -1,18 +1,30 @@
+// ignore_for_file: camel_case_types
+
+import 'package:flutter/cupertino.dart';
 import 'package:hotel_front/navigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:hotel_front/rating.dart';
 import 'package:hotel_front/models.dart';
+import 'dart:async';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 const List<String> choose = <String>["Дешевле", "Дороже"];
 String val = choose[0];
 late String heading;
 late String subheading;
-var result = [];
-var cardImage = NetworkImage('https://sovcominvest.ru/uploads/photo/6921/image/4e6b21d8254ef3e176bd0837a24efad8.jpg');
+var cardImage = NetworkImage(
+    'https://sovcominvest.ru/uploads/photo/6921/image/4e6b21d8254ef3e176bd0837a24efad8.jpg');
 late String supportingText;
+late List<Rooms> Rdate;
+var url1 = "http://10.0.2.2:5000/hotel/1";
 
-
+Future<void> dec() async {
+  final response = await http.get(Uri.parse(url1));
+  String res = utf8.decode(response.bodyBytes);
+  final json = jsonDecode(res) as List<dynamic>;
+  Rdate = json.map((e) => Rooms.fromJson(e as Map<String, dynamic>)).toList();
+}
 
 class roomPage extends StatefulWidget {
   @override
@@ -21,19 +33,17 @@ class roomPage extends StatefulWidget {
 
 class roomCard extends State<roomPage> {
 
-  void takeData(){
-    Roomdecode Rdecode = Roomdecode();
-    final json = jsonDecode(Rdecode.dec().toString()) as List<dynamic>;
-    final res = json.map((e) => Rooms.fromJson(e as Map<String, dynamic>)).toList();
-    setState(() {
-      result = res;
-    });
-  }
+  String? _value;
 
   @override
   void initState() {
     super.initState();
-    takeData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {dec();});
+    dec().then((_value){
+      setState(() {
+        _value = "result";
+      });
+    });
   }
 
   @override
@@ -43,39 +53,29 @@ class roomCard extends State<roomPage> {
       home: Scaffold(
         drawer: navigationBarside(),
         appBar: AppBar(
-          title: Text("Сначала:"),
-          actions: [
-            DropdownButton(
-              value: val,
-              icon: Icon(Icons.keyboard_arrow_down),
-              items: choose.map((String items) {
-                return DropdownMenuItem(
-                  value: items,
-                  child: Text(items),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                val = newValue!;
-              },
-            ),
-          ],
+          title: Text("Номера"),
         ),
         backgroundColor: Colors.indigo,
         body: ListView.builder(
-            itemCount: result.length,
+            itemCount: Rdate.length+1,
             itemBuilder: (BuildContext context, int index) {
-              heading = '';
-              subheading='';
-              supportingText='';
-              subheading += result[index].bedScore.toString();
-              subheading += 'кровати, ';
-              subheading += result[index].vans.toString();
-              subheading += 'ванная';
-              heading += result[index].cost.toString();
-              heading += ' руб за сутки';
-              supportingText += 'Описание:';
-              supportingText += result[index].description.toString();
-              return Card(
+              if(index==0){
+                return ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(onPressed: (){url1 = "http://10.0.2.2:5000/hotel/1"; Navigator.push(context, MaterialPageRoute(builder: (context) => roomPage())); }, child: Text("Сначала дешевле",style: TextStyle(color: Colors.black),), style:TextButton.styleFrom(fixedSize: const Size(182, 40), backgroundColor: Colors.white)),
+                    TextButton(onPressed: (){url1 = "http://10.0.2.2:5000/hotel/2"; Navigator.push(context, MaterialPageRoute(builder: (context) => roomPage())); }, child: Text("Сначала дороже", style: TextStyle(color: Colors.black),), style:TextButton.styleFrom(fixedSize: const Size(182, 40), backgroundColor: Colors.white)),
+                  ],
+                );
+              }
+              else {
+                heading = '${Rdate[index-1].cost.toString()} руб за сутки';
+                subheading =
+                '${Rdate[index-1].bedScore.toString()} кровати, ${Rdate[index-1]
+                    .vans.toString()} ванная';
+                supportingText =
+                'Описание: ${Rdate[index-1].description.toString()}';
+                return Card(
                   elevation: 4.0,
                   child: Column(
                     children: [
@@ -118,11 +118,12 @@ class roomCard extends State<roomPage> {
                         ],
                       )
                     ],
-                  ));
+                  ),
+                );
+              }
             }),
       ),
     );
-    throw UnimplementedError();
   }
 }
 

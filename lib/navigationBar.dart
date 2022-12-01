@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_front/login.dart';
 import 'package:hotel_front/myRooms.dart';
 import 'package:hotel_front/balance.dart';
 import 'package:hotel_front/profile.dart';
@@ -72,12 +73,11 @@ class exit extends StatelessWidget{
       actions: <Widget>[
         TextButton(
             onPressed: (){
-              Navigator.of(context).pop();
+
             },
             child: const Text("Да")),
         TextButton(
             onPressed: (){
-              Navigator.of(context).pop();
             },
             child: const Text("Нет"))
       ],

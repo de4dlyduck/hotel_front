@@ -41,7 +41,7 @@ class _profilePage extends State<profilePage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white),
               ),
-              onTap: (){showDialog(context: context, builder: (context)=> login());},
+              onTap: (){showDialog(context: context, builder: (context)=> logPage());},
             ),
           ],
         ),

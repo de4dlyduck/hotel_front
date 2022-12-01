@@ -14,7 +14,6 @@ class _regPage extends State<regPage> {
   Widget build(BuildContext context) {
     cont = context;
     return Scaffold(
-      drawer: navigationBarside(),
       appBar: AppBar(
         title: Text('Регистрация'),
       ),
