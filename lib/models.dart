@@ -50,6 +50,7 @@ class Profiles {
   late int nomber;
   late String mail;
   late int telNumber;
+  late String role;
 
   Profiles({
     required this.name,
@@ -60,6 +61,7 @@ class Profiles {
     required this.nomber,
     required this.mail,
     required this.telNumber,
+    required this.role
   });
 
   factory Profiles.fromJson(Map<String, dynamic> json){
@@ -67,11 +69,12 @@ class Profiles {
         name: json['name'] as String,
         surname: json['surname'] as String,
         patronymic: json['patronymic'] as String,
-        password: json['vans'] as String,
-        serial: json['bedScore'] as int,
-        nomber: json['occupied'] as int,
-        mail: json['idUser'] as String,
-        telNumber: json['roomCode'] as int);
+        password: json['password'] as String,
+        serial: json['serial'] as int,
+        nomber: json['nomber'] as int,
+        mail: json['mail'] as String,
+        telNumber: json['telNumber'] as int,
+    role: json['role'] as String);
   }
 }
 

@@ -47,10 +47,6 @@ class navigationBarside extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.message),
-            title: Text("Обратная свзять"),
-          ),
-          ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text("Выход"),
             onTap: (){
