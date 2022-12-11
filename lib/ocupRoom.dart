@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_front/navigationBar.dart';
 import 'package:hotel_front/login.dart';
+import 'package:hotel_front/navigationBarAdmin.dart';
 import 'package:hotel_front/rating.dart';
 import 'package:hotel_front/models.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-late int ind;
-late List<Date> RdateMyRoom;
+late List<Profiles> RdateProfileUs;
 
-Future<void> decMyRoom() async {
+Future<void> decProfileTel() async {
   final response = await http.get(
-      Uri.parse("http://10.0.2.2:5000/api/hotel/UserRoom/${id}"));
+      Uri.parse("http://10.0.2.2:5000/api/hotel/nameTel/${tel}"));
   String res = utf8.decode(response.bodyBytes);
   final json = jsonDecode(res) as List<dynamic>;
-  RdateMyRoom =
-      json.map((e) => Date.fromJson(e as Map<String, dynamic>)).toList();
-
+  RdateProfileUs =
+      json.map((e) => Profiles.fromJson(e as Map<String, dynamic>)).toList();
 }
 
-class MyRooms extends StatelessWidget {
-  const MyRooms({super.key});
+
+class ocupRooms extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: myRoomsCard(),
+      home: ocupCard(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class myRoomsCard extends StatelessWidget {
-  const myRoomsCard({super.key});
+class ocupCard extends StatelessWidget {
+  const ocupCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: navigationBarside(),
+      drawer: navigationBarsideAdmin(),
       appBar: AppBar(
         title: Text("Ваши номера"),
       ),
       backgroundColor: Colors.indigo,
       body: ListView.builder(
-          itemCount: RdateMyRoom.length,
+          itemCount: RdateallRoom.length,
           itemBuilder: (BuildContext context, int index) {
             return Card(
                 elevation: 4.0,
@@ -52,15 +50,15 @@ class myRoomsCard extends StatelessWidget {
                   children: [
                     ListTile(
                       title: Text('Ваш номер'),
-                      subtitle: Text('${RdateMyRoom[index].first_day}/${RdateMyRoom[index].last_day}'),
+                      subtitle: Text('${RdateallRoom[index].first_day}/${RdateallRoom[index].last_day}'),
                       trailing: TextButton.icon(
-                        label: Text(des().desrati(RdateMyRoom[index].id_room)),
+                        label: Text(des().desrati(RdateallRoom[index].id_room)),
                         icon: Icon(Icons.star),
                         onPressed: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ratingHotel(id_room: RdateMyRoom[index].id_room,)));
+                                  builder: (context) => ratingHotel(id_room: RdateallRoom[index].id_room,)));
                         },
                       ),
                     ),
@@ -74,7 +72,7 @@ class myRoomsCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(16.0),
                       alignment: Alignment.centerLeft,
-                      child: Text(des().desc(RdateMyRoom[index].id_room)),
+                      child: Text(des().desc(RdateallRoom[index].id_room)),
                     ),
                     ButtonBar(
                       children: [
@@ -84,6 +82,14 @@ class myRoomsCard extends StatelessWidget {
                             showDialog(
                                 context: context,
                                 builder: (context) => code(idMyRoom: index,));
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ'),
+                          onPressed: () async {
+                            await decProfileTel();
+                            showDialog(context: context, builder:(context)=>showProfile());
+
                           },
                         )
                       ],
@@ -103,7 +109,7 @@ class code extends StatelessWidget {
     return AlertDialog(
       title: Text("Код доступа"),
       content: SingleChildScrollView(
-        child: Text(RdateMyRoom[idMyRoom].code.toString()),
+        child: Text(RdateallRoom[idMyRoom].code.toString()),
       ),
       actions: <Widget>[
         TextButton(
@@ -120,12 +126,12 @@ class code extends StatelessWidget {
 class des{
   String desc(int id_room){
     for(int i=0;i<Rdate.length;i++)
+    {
+      if(Rdate[i].id_room==id_room)
       {
-        if(Rdate[i].id_room==id_room)
-          {
-            return Rdate[i].description.toString();
-          }
+        return Rdate[i].description.toString();
       }
+    }
     return 'null';
   }
 
@@ -140,3 +146,37 @@ class des{
     return 'null';
   }
 }
+
+class showProfile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Center(child:Text("Профиль гостя")),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text('Имя:'+RdateProfileUs[0].name.toString()),
+            SizedBox(height: 12),
+            Text('Фамилия:'+RdateProfileUs[0].surname.toString()),
+            SizedBox(height: 12),
+            Text('Отчетво:'+RdateProfileUs[0].patronymic.toString()),
+            SizedBox(height: 12),
+            Text('Серия:'+RdateProfileUs[0].serial.toString()),
+            SizedBox(height: 12),
+            Text('Номер:'+RdateProfileUs[0].nomber.toString()),
+            SizedBox(height: 12),
+            Text('Телефон:'+RdateProfileUs[0].telNumber.toString())
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+            onPressed: (){
+              Navigator.of(context).pop();
+            },
+            child: const Text("OK"))
+      ],
+    );
+  }
+}
+

@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_front/navigationBar.dart';
+import 'package:hotel_front/navigationBarAdmin.dart';
 import 'package:hotel_front/login.dart';
+import 'package:hotel_front/regAdmin.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-
 var cont;
 
-class profilePage extends StatefulWidget {
+class profilePageAdmin extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _profilePage();
+  State<StatefulWidget> createState() => _profilePageAdmin();
 }
 
-class _profilePage extends State<profilePage> {
+class _profilePageAdmin extends State<profilePageAdmin> {
   @override
   Widget build(BuildContext context) {
     cont = context;
     return Scaffold(
-      drawer: navigationBarside(),
+      drawer: navigationBarsideAdmin(),
       appBar: AppBar(
         title: Text('Ваш профиль'),
       ),
@@ -26,13 +25,8 @@ class _profilePage extends State<profilePage> {
         padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: ListView(
           children: [
-            buildUserInfoDisplay(RdateProfile[0].name.toString(), 'Имя:',1),
-            buildUserInfoDisplay(RdateProfile[0].surname.toString(), 'Фамилия:',2),
-            buildUserInfoDisplay(RdateProfile[0].patronymic.toString(), 'Отчество:',3),
-            buildUserInfoDisplay(RdateProfile[0].serial.toString(), 'Серия паспорта:',4),
-            buildUserInfoDisplay(RdateProfile[0].nomber.toString(), 'Номер паспорта:',5),
-            buildUserInfoDisplay(RdateProfile[0].mail.toString(), 'Почта:',6),
-            buildUserInfoDisplay(RdateProfile[0].telNumber.toString(), 'Телефон:',7),
+            buildUserInfoDisplay(RdateProfile[0].mail, 'Почта:',6),
+            buildUserInfoDisplay(RdateProfile[0].telNumber, 'Телефон:',7),
             ListTile(
               tileColor: Colors.indigo,
               shape: RoundedRectangleBorder(
@@ -46,12 +40,27 @@ class _profilePage extends State<profilePage> {
               ),
               onTap: (){showDialog(context: context, builder: (context)=> newInfo(info: 8, id_user: id));},
             ),
+            SizedBox(height: 15,),
+            ListTile(
+              tileColor: Colors.indigo,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              title: Text(
+                "Добавить админа",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: (){showDialog(context: context, builder: (context)=> regPageAdmin());},
+            ),
           ],
         ),
       ),
     );
   }
 }
+
 
 Widget buildUserInfoDisplay(String getValue, String title, int i) =>
     Padding(
@@ -75,9 +84,9 @@ Widget buildUserInfoDisplay(String getValue, String title, int i) =>
                 decoration: BoxDecoration(
                     border: Border(
                         bottom: BorderSide(
-                  color: Colors.white,
-                  width: 1,
-                ))),
+                          color: Colors.white,
+                          width: 1,
+                        ))),
                 child: Row(children: [
                   Expanded(
                       child: TextButton(
@@ -135,9 +144,10 @@ class newInfo extends StatelessWidget {
                   style: TextStyle(color: Colors.black),
                 ),
                 onTap: () async {
-                  await http.post(Uri.parse('http://10.0.2.2:5000/api/hotel/update/${info}'),headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',}, body: jsonEncode(<String, String>{'data': data, 'id':id.toString()}));
+
+                  http.post(Uri.parse('http://10.0.2.2:5000/api/hotel/update/${info}'),headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',}, body: jsonEncode(<String, String>{'data': data, 'id':id.toString()}));
                   await decProfile();
-                  Navigator.push(context, MaterialPageRoute(builder:(context)=>profilePage()));
+                  Navigator.push(context, MaterialPageRoute(builder:(context)=>profilePageAdmin()));
                 },
               ),
             ],

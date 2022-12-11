@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hotel_front/navigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:hotel_front/rating.dart';
+import 'package:hotel_front/login.dart';
 import 'package:hotel_front/models.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -11,19 +12,16 @@ import 'package:http/http.dart' as http;
 
 const List<String> choose = <String>["Дешевле", "Дороже"];
 String val = choose[0];
-late String heading;
-late String subheading;
-var cardImage = NetworkImage(
-    'https://sovcominvest.ru/uploads/photo/6921/image/4e6b21d8254ef3e176bd0837a24efad8.jpg');
-late String supportingText;
-late List<Rooms> Rdate;
-var url1 = "http://10.0.2.2:5000/hotel/1";
 
-Future<void> dec() async {
-  final response = await http.get(Uri.parse(url1));
+String Urlrat='http://10.0.2.2:5000/api/hotel/rating/all/1/';
+
+late List<Reviews> RdateRating;
+
+Future<void> decRating(int id_room) async {
+  final response = await http.get(Uri.parse(Urlrat+id_room.toString()));
   String res = utf8.decode(response.bodyBytes);
   final json = jsonDecode(res) as List<dynamic>;
-  Rdate = json.map((e) => Rooms.fromJson(e as Map<String, dynamic>)).toList();
+  RdateRating = json.map((e) => Reviews.fromJson(e as Map<String, dynamic>)).toList();
 }
 
 class roomPage extends StatefulWidget {
@@ -32,6 +30,8 @@ class roomPage extends StatefulWidget {
 }
 
 class roomCard extends State<roomPage> {
+
+
 
   String? _value;
 
@@ -75,7 +75,9 @@ class roomCard extends State<roomPage> {
                     .vans.toString()} ванная';
                 supportingText =
                 'Описание: ${Rdate[index-1].description.toString()}';
+                photo=Rdate[index-1].photo.toString();
                 return Card(
+                  key: ValueKey(index),
                   elevation: 4.0,
                   child: Column(
                     children: [
@@ -83,20 +85,18 @@ class roomCard extends State<roomPage> {
                         title: Text(heading),
                         subtitle: Text(subheading),
                         trailing: TextButton.icon(
-                          label: Text("4.5"),
+                          label: Text(Rdate[index-1].rat),
                           icon: Icon(Icons.star),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ratingHotel()));
+                          onPressed: () async {
+                            await decRating(Rdate[index-1].id_room,);
+                            showDialog(context: context, builder:(context)=>ratingHotel(id_room: Rdate[index-1].id_room,));
                           },
                         ),
                       ),
                       Container(
                         height: 200.0,
                         child: Ink.image(
-                          image: cardImage,
+                          image: NetworkImage(photo),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -112,7 +112,7 @@ class roomCard extends State<roomPage> {
                             onPressed: () {
                               showDialog(
                                   context: context,
-                                  builder: (context) => takeOffDate());
+                                  builder: (context) => takeOffDate(cost: Rdate[index-1].cost, id_room: Rdate[index-1].id_room,));
                             },
                           )
                         ],
@@ -128,11 +128,19 @@ class roomCard extends State<roomPage> {
 }
 
 class takeOffDate extends StatefulWidget {
+  late double cost;
+  late int id_room;
+  takeOffDate({super.key, required this.cost, required this.id_room});
   @override
-  State<StatefulWidget> createState() => _takeOff();
+  State<StatefulWidget> createState() => _takeOff(costUser: cost, id_room: id_room);
 }
 
 class _takeOff extends State<takeOffDate> {
+  late int id_room;
+  late double costUser;
+  var firt_day;
+  var last_day;
+  _takeOff({required this.costUser, required this.id_room});
   late DateTimeRange result;
   String date = 'Выберите даты';
   String datecost = 'Цена:';
@@ -152,20 +160,22 @@ class _takeOff extends State<takeOffDate> {
             onPressed: () async {
               result = (await showDateRangePicker(
                   context: context,
-                  currentDate: DateTime(2021),
-                  firstDate: DateTime(2020, 8),
-                  lastDate: DateTime(2022)))!;
+                  currentDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day),
+                  firstDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day),
+                  lastDate: DateTime(DateTime.now().year,DateTime.now().month+1,DateTime.now().day)))!;
               if (result != null) {
                 setState(() {
                   var dateT = DateTime.parse(result.start.toString());
+                  firt_day = dateT;
                   date = "${dateT.day}-${dateT.month}-${dateT.year}";
                   date += '/';
                   dateT = DateTime.parse(result.end.toString());
+                  last_day = dateT;
                   date += "${dateT.day}-${dateT.month}-${dateT.year}";
                   int cost;
                   cost = 0;
                   datecost = 'Цена:';
-                  cost = result.duration.inDays.toInt() * 2300;
+                  cost = result.duration.inDays.toInt() * costUser.toInt();
                   datecost += cost.toString();
                   datecost += ' Руб';
                 });
@@ -176,9 +186,24 @@ class _takeOff extends State<takeOffDate> {
             style: TextButton.styleFrom(
               fixedSize: const Size(300, 50),
             ),
-            onPressed: () {},
+            onPressed: () async {
+              Date payday= new Date(id: id, id_room: id_room, first_day: firt_day.toString().substring(0,firt_day.toString().indexOf(" ")), last_day: last_day.toString().substring(0,last_day.toString().indexOf(" ")), code: "");
+              String jsonfile = jsonEncode(payday.toJson());
+              await http.post(Uri.parse('http://10.0.2.2:5000/api/hotel/payRoom'),headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              }, body: jsonfile).then((value){
+                if(value.body=='error')
+                  {
+                    setState(() {
+                      datecost='Номер на эти даты уже занят';
+                    });
+                  }
+              });
+            },
             child: Text('Снять')),
       ],
     );
   }
 }
+
+

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_front/login.dart';
 import 'package:hotel_front/navigationBar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class balancePage extends StatelessWidget {
   @override
@@ -39,14 +43,20 @@ class balanceCard extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 2,
+              itemCount: RdatePenalties.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ListTile(
-                    title: Text("Мелкие поломки"),
+                    title: Text(RdatePenalties[index].description.toString()),
+                    subtitle: Text("${RdatePenalties[index].cost.toString()} руб"),
                     trailing: TextButton(
                       child: Text("Оплатить"),
-                      onPressed: () {},
+                      onPressed: () async {
+                        payClass paY = new payClass(id: RdatePenalties[index].id_penal);
+                        await paY.pay(paY.id);
+                        await decPenalties();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => balancePage()));
+                      },
                     ),
                   ),
                 );
@@ -56,5 +66,19 @@ class balanceCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class payClass{
+  late int id;
+
+  payClass({required this.id});
+
+  Future<void> pay(int id) async {
+    await http.post(Uri.parse('http://10.0.2.2:5000/api/hotel/deletPen'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        }, body: jsonEncode(<String, String>{'id': id.toString()}));
+    await decPenalties();
   }
 }

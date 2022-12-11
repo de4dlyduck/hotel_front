@@ -11,10 +11,11 @@ class Rooms {
   late int personScore;
   late int vans;
   late int bedScore;
-  late Bool occupied;
-  late int idUser;
+  late bool occupied;
   late String roomCode;
-
+  late String photo;
+  late int id_room;
+  String rat='';
   Rooms({
     required this.description,
     required this.cost,
@@ -22,8 +23,9 @@ class Rooms {
     required this.vans,
     required this.bedScore,
     required this.occupied,
-    required this.idUser,
     required this.roomCode,
+    required this.photo,
+    required this.id_room
   });
 
   factory Rooms.fromJson(Map<String, dynamic> json){
@@ -33,24 +35,37 @@ class Rooms {
         personScore: json['personScore'] as int,
         vans: json['vans'] as int,
         bedScore: json['bedScore'] as int,
-        occupied: json['occupied'] as Bool,
-        idUser: json['idUser'] as int,
-        roomCode: json['roomCode'] as String);
+        occupied: json['occupied'] as bool,
+        roomCode: json['roomCode'] as String,
+        photo: json['photo'] as String,
+        id_room: json['id'] as int
+    );
   }
+  Map toJson()=>
+      {
+       'description':description,
+       'cost':cost,
+       'personScore':personScore,
+       'vans':vans,
+       'bedScore':bedScore,
+       'occupied':occupied,
+       'roomCode':roomCode,
+       'photo':photo,
+      };
 }
 
 
 
 class Profiles {
-  late String name;
-  late String surname;
-  late String patronymic;
-  late String password;
-  late int serial;
-  late int nomber;
-  late String mail;
-  late int telNumber;
-  late String role;
+    late String name;
+    late String surname;
+    late String patronymic;
+    late String password;
+    late String serial;
+    late String nomber;
+    late String mail;
+    late String telNumber;
+    late String type;
 
   Profiles({
     required this.name,
@@ -61,7 +76,7 @@ class Profiles {
     required this.nomber,
     required this.mail,
     required this.telNumber,
-    required this.role
+    required this.type
   });
 
   factory Profiles.fromJson(Map<String, dynamic> json){
@@ -70,12 +85,125 @@ class Profiles {
         surname: json['surname'] as String,
         patronymic: json['patronymic'] as String,
         password: json['password'] as String,
-        serial: json['serial'] as int,
-        nomber: json['nomber'] as int,
+        serial: json['serial'] as String,
+        nomber: json['nomber'] as String,
         mail: json['mail'] as String,
-        telNumber: json['telNumber'] as int,
-    role: json['role'] as String);
+        telNumber: json['telNumber'] as String,
+        type: json['role'] as String);
   }
+  Map toJson()=>
+      {
+        'name': name,
+        'surname': surname,
+        'patronymic': patronymic,
+        'password': password,
+        'serial': serial,
+        'nomber': nomber,
+        'mail': mail,
+        'telNumber': telNumber,
+        'type': type
+      };
+}
+
+
+class Penalties {
+  late double cost;
+  late String description;
+  late int id_user;
+  late int id_penal;
+  Penalties({
+    required this.description,
+    required this.cost,
+    required this.id_penal
+  });
+
+  factory Penalties.fromJson(Map<String, dynamic> json){
+    return Penalties(
+        description: json['description'] as String,
+        id_penal: json['id'] as int,
+        cost: json['cost'] as double);
+  }
+  Map toJson()=>
+      {
+        'cost': cost,
+        'id_user': id_user,
+        'description': description
+      };
+}
+
+class Reviews{
+
+  late String description;
+  late int rating;
+  late int id_rooms;
+  late String Name_profile;
+  late int id_profile;
+  Reviews(
+  {
+    required this.description,
+    required this.id_rooms,
+    required this.rating,
+    required this.id_profile,
+    required this.Name_profile
+
+  }
+      );
+
+  factory Reviews.fromJson(Map<String, dynamic> json){
+    return Reviews(
+        description: json['description'] as String,
+        rating: json['rating'] as int,
+        id_rooms: json['id_rooms'] as int,
+        id_profile: json['Name_profile'] as int,
+        Name_profile: json['name'] as String
+    );
+  }
+  Map toJson()=>
+      {
+        'rating': rating,
+        'id_profile': id_profile,
+        'description': description,
+        'id_rooms':id_rooms
+      };
+
+}
+
+
+class Date{
+  late int id;
+  late int id_room;
+  late String first_day;
+  late String last_day;
+  late String code;
+
+  Date({required this.id,
+    required this.id_room,
+    required this.first_day,
+    required this.last_day,
+    required this.code
+  });
+
+
+  factory Date.fromJson(Map<String, dynamic> json){
+    return Date(
+      id: json['id'] as int,
+      id_room: json['id_room'] as int,
+      first_day: json['first_day'] as String,
+      last_day: json['last_day'] as String,
+      code: json['code'] as String
+    );
+  }
+
+
+  Map toJson()=>
+      {
+        'id': id,
+        'id_room': id_room,
+        'first_day':first_day,
+        'last_day':last_day
+      };
+
+
 }
 
 
